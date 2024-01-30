@@ -1,13 +1,61 @@
 (async () => {
-  const [tab] = await chrome.tabs.query({
+  const [tab] = await getActiveTab();
+  const searchParams = new URL(tab.url).searchParams;
+  const manager = getManager(searchParams);
+  if (!manager) {
+    hideOptions();
+    return;
+  }
+  adjustOptions(manager);
+  addEventListeners(manager);
+})();
+
+function getActiveTab() {
+  return chrome.tabs.query({
     active: true,
     currentWindow: true,
   });
-  const searchParams = new URL(tab.url).searchParams;
-  let manager;
-  for (const [key, value] in searchParams) {
+}
+
+function getManager(searchParams) {
+  for (const [key, value] of searchParams) {
     if (key === 'list') {
-      manager = new Manager(value);
+      return new Manager(value, true);
     }
   }
-})();
+}
+
+function hideOptions() {
+  document.getElementById("options").style.display = "none";
+  document.getElementById("message").style.display = "";
+}
+
+function getSwitchNode() {
+  return document.getElementById("isOn");
+}
+
+function getLoopNode() {
+  return document.getElementById("isLoop");
+}
+
+async function adjustOptions(manager) {
+  getSwitchNode().checked = await manager.isEnabled();
+  getLoopNode().checked = await manager.isLoop();
+}
+
+function addEventListeners(manager) {
+  getSwitchNode().addEventListener("change", handleSwitch(manager));
+  getLoopNode().addEventListener("change", handleLoop(manager));
+}
+
+function handleSwitch(manager) {
+  return (e) => {
+    manager.saveIsEnabled(e.target.checked);
+  }
+}
+
+function handleLoop(manager) {
+  return (e) => {
+    manager.saveIsLoop(e.target.checked);
+  }
+}

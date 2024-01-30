@@ -1,4 +1,4 @@
-const manager = new Manager(getListIdFromUrl());
+const manager = new Manager(getListIdFromUrl(), false);
 
 function getListIdFromUrl() {
   const searchParams = new URLSearchParams(location.search);
@@ -19,3 +19,6 @@ pageObserver.observe(document, {
   childList: true,
   subtree: true,
 });
+
+// test
+manager.saveIsEnabled(true);
