@@ -1,24 +1,51 @@
-const manager = new Manager(getListIdFromUrl(), false);
-
-function getListIdFromUrl() {
+function getManager() {
   const searchParams = new URLSearchParams(location.search);
   for (const [key, value] of searchParams) {
     if (key === 'list') {
-      return value;
+      return new Manager(value);
     }
   }
 }
 
-let elements;
-const pageObserver = new MutationObserver(() => {
-  elements = Array.from(document.querySelectorAll('ytd-playlist-panel-video-renderer'));
-  console.log(elements.length);
-});
-pageObserver.observe(document, {
-  attributes: true,
-  childList: true,
-  subtree: true,
-});
+function getPlaylistItemNodes() {
+  return Array.from(document.querySelectorAll('ytd-playlist-panel-video-renderer'));
+}
 
-// test
-manager.saveIsEnabled(true);
+function main() {
+  const manager = getManager();
+  if (!manager) {
+    return false;
+  }
+  let elements;
+  const pageObserver = new MutationObserver(() => {
+    elements = getPlaylistItemNodes();
+    console.log(elements.length);
+  });
+  pageObserver.observe(document, {
+    childList: true,
+    subtree: true,
+  });
+
+  manager.initialise();
+  return () => pageObserver.disconnect();
+}
+
+function execute() {
+  let execution = main();
+  let currLocation = location.href;
+  const urlObserver = new MutationObserver(() => {
+    if (location.href !== currLocation) {
+      currLocation = location.href;
+      if (execution) {
+        execution();
+      }
+      execution = main();
+    }
+  });
+  urlObserver.observe(document, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+execute();

@@ -4,38 +4,25 @@ class Manager {
 
   static infoKey = 'playlistShuffles';
 
-  constructor(listId, isPopup) {
+  constructor(listId) {
     this.listId = listId;
-    if (isPopup) {
-      this.storage = {
-        async getItem(key) {
-          return localStorage.getItem(key);
-        },
-        setItem(key, value) {
-          localStorage.setItem(key, value);
-        },
-      };
-    } else {
-      this.storage = {
-        async getItem(key) {
-          return chrome.storage.sync.get([key])
-            .then(items => items.length > 0 ? items[0] : undefined);
-        },
-        setItem(key, value) {
-          chrome.storage.sync.set({ [key]: value });
-        },
-      }
+    this.storage = {
+      async getItem() {
+        return chrome.storage.sync.get([Manager.infoKey])
+          .then(item => item[Manager.infoKey]);
+      },
+      setItem(value) {
+        chrome.storage.sync.set({ playlistShuffles: value });
+      },
     }
   }
 
   async loadInfo() {
-    const infoString = await this.storage.getItem(Manager.infoKey);
+    const infoString = await this.storage.getItem();
     try {
       return this.loadInfoFromString(infoString);
     } catch (e) {
-      return [{
-        listId: this.listId,
-      }];
+      return [];
     }
   }
 
@@ -77,12 +64,30 @@ class Manager {
     }
   }
 
+  async initialise() {
+    const info = await this.loadInfo();
+    console.log("info", info);
+    for (let i = 0; i < info.length; i++) {
+      if (info[i].listId === this.listId) {
+        return;
+      }
+    }
+
+    info.push({
+      listId: this.listId,
+      isEnabled: true,
+      isLoop: true,
+    });
+    this.storage.setItem(JSON.stringify(info));
+    return info;
+  }
+
   async saveIsEnabled(isEnabled) {
     const info = await this.loadInfo();
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
         info[i].isEnabled = isEnabled;
-        this.storage.setItem(Manager.infoKey, JSON.stringify(info));
+        this.storage.setItem(JSON.stringify(info));
         return info;
       }
     }
@@ -90,7 +95,7 @@ class Manager {
       listId: this.listId,
       isEnabled: isEnabled,
     });
-    this.storage.setItem(Manager.infoKey, JSON.stringify(info));
+    this.storage.setItem(JSON.stringify(info));
     return info;
   }
 
@@ -99,7 +104,7 @@ class Manager {
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
         info[i].isLoop = isLoop;
-        this.storage.setItem(Manager.infoKey, JSON.stringify(info));
+        this.storage.setItem(JSON.stringify(info));
         return info;
       }
     }
@@ -107,7 +112,7 @@ class Manager {
       listId: this.listId,
       isLoop: isLoop,
     });
-    this.storage.setItem(Manager.infoKey, JSON.stringify(info));
+    this.storage.setItem(JSON.stringify(info));
     return info;
   }
 }

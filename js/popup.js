@@ -20,7 +20,7 @@ function getActiveTab() {
 function getManager(searchParams) {
   for (const [key, value] of searchParams) {
     if (key === 'list') {
-      return new Manager(value, true);
+      return new Manager(value);
     }
   }
 }
