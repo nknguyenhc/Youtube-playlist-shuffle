@@ -14,6 +14,9 @@ class Manager {
       setItem(value) {
         chrome.storage.sync.set({ playlistShuffles: value });
       },
+      clear() {
+        chrome.storage.sync.clear();
+      },
     }
   }
 
@@ -114,5 +117,9 @@ class Manager {
     });
     this.storage.setItem(JSON.stringify(info));
     return info;
+  }
+
+  clear() {
+    this.storage.clear();
   }
 }

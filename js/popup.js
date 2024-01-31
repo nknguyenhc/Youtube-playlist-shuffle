@@ -38,6 +38,10 @@ function getLoopNode() {
   return document.getElementById("isLoop");
 }
 
+function getButtonNode() {
+  return document.getElementById("reset");
+}
+
 async function adjustOptions(manager) {
   getSwitchNode().checked = await manager.isEnabled();
   getLoopNode().checked = await manager.isLoop();
@@ -46,6 +50,7 @@ async function adjustOptions(manager) {
 function addEventListeners(manager) {
   getSwitchNode().addEventListener("change", handleSwitch(manager));
   getLoopNode().addEventListener("change", handleLoop(manager));
+  getButtonNode().addEventListener("click", handleClear(manager));
 }
 
 function handleSwitch(manager) {
@@ -57,5 +62,11 @@ function handleSwitch(manager) {
 function handleLoop(manager) {
   return (e) => {
     manager.saveIsLoop(e.target.checked);
+  }
+}
+
+function handleClear(manager) {
+  return () => {
+    manager.clear();
   }
 }
