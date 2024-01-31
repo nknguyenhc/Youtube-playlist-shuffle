@@ -68,5 +68,6 @@ function handleLoop(manager) {
 function handleClear(manager) {
   return () => {
     manager.clear();
+    adjustOptions(manager);
   }
 }

@@ -14,9 +14,6 @@ class Manager {
       setItem(value) {
         chrome.storage.sync.set({ playlistShuffles: value });
       },
-      clear() {
-        chrome.storage.sync.clear();
-      },
     }
   }
 
@@ -69,7 +66,6 @@ class Manager {
 
   async initialise() {
     const info = await this.loadInfo();
-    console.log("info", info);
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
         return;
@@ -120,6 +116,37 @@ class Manager {
   }
 
   clear() {
-    this.storage.clear();
+    this.storage.setItem('');
+  }
+
+  async shuffle(numOfItems) {
+    const items = this.getShuffledList(numOfItems);
+    const info = await this.loadInfo();
+    for (let i = 0; i < info.length; i++) {
+      if (info[i].listId === this.listId) {
+        info[i].shuffle = items;
+        info[i].pointer = 0;
+        this.storage.setItem(JSON.stringify(info));
+        return info;
+      }
+    }
+    info.push({
+      listId: this.listId,
+      shuffle: items,
+      pointer: 0,
+    });
+    this.storage.setItem(JSON.stringify(info));
+    return info
+  }
+
+  getShuffledList(numOfItems) {
+    const items = Array.from(Array(numOfItems).keys());
+    let currentIndex = numOfItems;
+    while (currentIndex > 0) {
+      const randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [items[currentIndex], items[randomIndex]] = [items[randomIndex], items[currentIndex]];
+    }
+    return items;
   }
 }

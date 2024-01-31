@@ -16,10 +16,14 @@ function main() {
   if (!manager) {
     return false;
   }
-  let elements;
+  let elements = [];
   const pageObserver = new MutationObserver(() => {
-    elements = getPlaylistItemNodes();
-    console.log(elements.length);
+    const newElements = getPlaylistItemNodes();
+    if (elements.length === newElements.length || newElements.length === 0) {
+      return;
+    }
+    elements = newElements;
+    manager.shuffle(elements.length);
   });
   pageObserver.observe(document, {
     childList: true,
