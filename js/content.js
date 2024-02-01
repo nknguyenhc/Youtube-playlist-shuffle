@@ -30,7 +30,6 @@ function main() {
     subtree: true,
   });
 
-  manager.initialise();
   return () => pageObserver.disconnect();
 }
 

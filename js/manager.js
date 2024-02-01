@@ -64,23 +64,6 @@ class Manager {
     }
   }
 
-  async initialise() {
-    const info = await this.loadInfo();
-    for (let i = 0; i < info.length; i++) {
-      if (info[i].listId === this.listId) {
-        return;
-      }
-    }
-
-    info.push({
-      listId: this.listId,
-      isEnabled: true,
-      isLoop: true,
-    });
-    this.storage.setItem(JSON.stringify(info));
-    return info;
-  }
-
   async saveIsEnabled(isEnabled) {
     const info = await this.loadInfo();
     for (let i = 0; i < info.length; i++) {
@@ -124,6 +107,9 @@ class Manager {
     const info = await this.loadInfo();
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
+        if (!info[i].enabled) {
+          return info;
+        }
         info[i].shuffle = items;
         info[i].pointer = 0;
         this.storage.setItem(JSON.stringify(info));
@@ -132,6 +118,8 @@ class Manager {
     }
     info.push({
       listId: this.listId,
+      isEnabled: true,
+      isLoop: true,
       shuffle: items,
       pointer: 0,
     });
