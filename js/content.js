@@ -23,19 +23,42 @@ function isAdVideo(containerNode) {
   return containerNode.querySelector('.ytp-heat-map') === null;
 }
 
-function getVideoListener(videoNode) {
-  return () => {
-    if (videoNode.currentTime > videoNode.duration - 5) {
-      videoNode.pause();
+function getVideoListener(manager, videoNode) {
+  return async () => {
+    if (videoNode.currentTime > videoNode.duration - 2) {
+      const nextIndex = await manager.getNextIndex();
+      if (nextIndex === undefined) {
+        return;
+      } else if (nextIndex === null) {
+        videoNode.pause();
+        return;
+      }
+
+      const nodes = getPlaylistItemNodes();
+      if (nodes.length <= nextIndex) {
+        // playlist has changed
+        pressPlaylistItem(nodes[getRandomIndex(nodes.length)]);
+        manager.shuffle();
+        return;
+      }
+      pressPlaylistItem(nodes[nextIndex]);
     }
   }
 }
 
-function main() {
+function getRandomIndex(numOfItems) {
+  return Math.floor(Math.random() * numOfItems);
+}
+
+function pressPlaylistItem(playlistItem) {
+  playlistItem.querySelector('a').click();
+}
+
+function main(lastManager) {
   const manager = getManager();
   if (!manager) {
     // not in a Youtube playlist
-    return false;
+    return [manager, false];
   }
   let elements = [];
   const playlistObserver = new MutationObserver(() => {
@@ -45,7 +68,9 @@ function main() {
       return;
     }
     elements = newElements;
-    manager.shuffle(elements.length);
+    if (!manager.equal(lastManager)) {
+      manager.shuffle(elements.length);
+    }
   });
   playlistObserver.observe(document, {
     childList: true,
@@ -66,9 +91,8 @@ function main() {
     if (videoNode) {
       return;
     }
-    console.log("attaching event listener");
     videoNode = getVideoNode(containerNode);
-    videoController = getVideoListener(videoNode);
+    videoController = getVideoListener(manager, videoNode);
     videoNode.addEventListener('timeupdate', videoController);
   };
   attachEventListener();
@@ -79,17 +103,17 @@ function main() {
     subtree: true,
   });
 
-  return () => {
+  return [manager, () => {
     playlistObserver.disconnect();
     videoObserver.disconnect();
     if (videoNode) {
       videoNode.removeEventListener('timeupdate', videoController);
     }
-  };
+  }];
 }
 
 function execute() {
-  let execution = main();
+  let [lastManager, execution] = main();
   let currLocation = location.href;
   const urlObserver = new MutationObserver(() => {
     if (location.href !== currLocation) {
@@ -97,7 +121,7 @@ function execute() {
       if (execution) {
         execution();
       }
-      execution = main();
+      [lastManager, execution] = main(lastManager);
     }
   });
   urlObserver.observe(document, {

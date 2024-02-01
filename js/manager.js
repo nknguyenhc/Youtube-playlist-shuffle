@@ -107,7 +107,7 @@ class Manager {
     const info = await this.loadInfo();
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
-        if (!info[i].enabled) {
+        if (!info[i].isEnabled) {
           return info;
         }
         info[i].shuffle = items;
@@ -136,5 +136,36 @@ class Manager {
       [items[currentIndex], items[randomIndex]] = [items[randomIndex], items[currentIndex]];
     }
     return items;
+  }
+
+  async getNextIndex() {
+    const info = await this.loadInfo();
+    for (let i = 0; i < info.length; i++) {
+      if (info[i].listId === this.listId) {
+        if (!info[i].isEnabled) {
+          // do not manipulate the DOM
+          return undefined;
+        }
+        if (!info[i].isLoop && info[i].shuffle.length === info[i].pointer) {
+          // stop the playlist
+          return null;
+        }
+        // manipulate the DOM
+        if (info[i].pointer === info[i].shuffle.length) {
+          info[i].pointer = 0;
+        }
+        const result = info[i].shuffle[info[i].pointer];
+        info[i].pointer = info[i].isLoop ? (info[i].pointer + 1) % info[i].shuffle.length : info[i].pointer + 1;
+        this.storage.setItem(JSON.stringify(info));
+        return result;
+      }
+    }
+  }
+
+  equal(item) {
+    if (!(item instanceof Manager)) {
+      return false;
+    }
+    return this.listId === item.listId;
   }
 }
