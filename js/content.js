@@ -8,7 +8,7 @@ function getManager() {
 }
 
 function getPlaylistItemNodes() {
-  return Array.from(document.querySelectorAll('ytd-playlist-panel-video-renderer'))
+  return Array.from(document.querySelectorAll('ytd-playlist-panel-video-renderer, ytd-playlist-video-renderer'))
     .filter(el => el.offsetParent !== null);
 }
 
