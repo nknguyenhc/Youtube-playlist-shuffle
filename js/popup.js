@@ -38,6 +38,10 @@ function getLoopNode() {
   return document.getElementById("isLoop");
 }
 
+function getReshuffleNode() {
+  return document.getElementById("reshuffle");
+}
+
 function getButtonNode() {
   return document.getElementById("reset");
 }
@@ -51,11 +55,13 @@ async function adjustOptions(manager) {
 
 function enableOptions(isEnabled) {
   getLoopNode().disabled = !isEnabled;
+  getReshuffleNode().disabled = !isEnabled;
 }
 
 function addEventListeners(manager) {
   getSwitchNode().addEventListener("change", handleSwitch(manager));
   getLoopNode().addEventListener("change", handleLoop(manager));
+  getReshuffleNode().addEventListener("click", handleReshuffle(manager));
   getButtonNode().addEventListener("click", handleClear(manager));
 }
 
@@ -69,6 +75,12 @@ function handleSwitch(manager) {
 function handleLoop(manager) {
   return (e) => {
     manager.saveIsLoop(e.target.checked);
+  }
+}
+
+function handleReshuffle(manager) {
+  return () => {
+    manager.saveIsEnabled(true);
   }
 }
 

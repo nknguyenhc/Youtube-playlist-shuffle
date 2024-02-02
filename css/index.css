@@ -5,3 +5,15 @@ body {
   flex-direction: column;
   gap: 6px;
 }
+
+.small-icon {
+  max-width: 20px;
+  max-height: 20px;
+}
+
+.icon-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
