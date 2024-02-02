@@ -27,28 +27,17 @@ function isAdVideo(containerNode) {
 function getVideoListener(manager, videoNode) {
   return async () => {
     if (videoNode.currentTime > videoNode.duration - 2) {
-      const nextIndex = await manager.getNextIndex();
+      const nodes = getPlaylistItemNodes();
+      const nextIndex = await manager.getNextIndex(nodes.length);
       if (nextIndex === undefined) {
         return;
       } else if (nextIndex === null) {
         videoNode.pause();
         return;
       }
-
-      const nodes = getPlaylistItemNodes();
-      if (nodes.length <= nextIndex) {
-        // playlist has changed
-        pressPlaylistItem(nodes[getRandomIndex(nodes.length)]);
-        manager.shuffle();
-        return;
-      }
       pressPlaylistItem(nodes[nextIndex]);
     }
   }
-}
-
-function getRandomIndex(numOfItems) {
-  return Math.floor(Math.random() * numOfItems);
 }
 
 function pressPlaylistItem(playlistItem) {

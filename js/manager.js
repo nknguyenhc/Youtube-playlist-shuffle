@@ -69,6 +69,7 @@ class Manager {
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
         info[i].isEnabled = isEnabled;
+        info[i].shuffle = undefined;
         this.storage.setItem(JSON.stringify(info));
         return info;
       }
@@ -138,13 +139,19 @@ class Manager {
     return items;
   }
 
-  async getNextIndex() {
+  async getNextIndex(numOfItems) {
     const info = await this.loadInfo();
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
         if (!info[i].isEnabled) {
           // do not manipulate the DOM
           return undefined;
+        }
+        console.log(info[i].shuffle);
+        if (!info[i].shuffle) {
+          // shuffle lost due to reactivation
+          info[i].shuffle = this.getShuffledList(numOfItems);
+          info[i].pointer = 0;
         }
         if (!info[i].isLoop && info[i].shuffle.length === info[i].pointer) {
           // stop the playlist
@@ -155,6 +162,11 @@ class Manager {
           info[i].pointer = 0;
         }
         const result = info[i].shuffle[info[i].pointer];
+        if (result >= numOfItems) {
+          info[i].shuffle = this.getShuffledList(numOfItems);
+          info[i].pointer = 0;
+          return info[i].shuffle[info[i].pointer];
+        }
         info[i].pointer = info[i].isLoop ? (info[i].pointer + 1) % info[i].shuffle.length : info[i].pointer + 1;
         this.storage.setItem(JSON.stringify(info));
         return result;
