@@ -100,7 +100,11 @@ class Manager {
   }
 
   clear() {
-    this.storage.setItem('');
+    this.storage.setItem(JSON.stringify([
+      {
+        listId: this.listId,
+      }
+    ]));
   }
 
   async shuffle(numOfItems) {
