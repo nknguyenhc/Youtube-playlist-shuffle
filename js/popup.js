@@ -58,6 +58,13 @@ function enableOptions(isEnabled) {
   getReshuffleNode().disabled = !isEnabled;
 }
 
+function animateEnableSwitch() {
+  getSwitchNode().checked = false;
+  setTimeout(() => {
+    getSwitchNode().checked = true;
+  }, 300);
+}
+
 function addEventListeners(manager) {
   getSwitchNode().addEventListener("change", handleSwitch(manager));
   getLoopNode().addEventListener("change", handleLoop(manager));
@@ -81,6 +88,7 @@ function handleLoop(manager) {
 function handleReshuffle(manager) {
   return () => {
     manager.saveIsEnabled(true);
+    animateEnableSwitch();
   }
 }
 

@@ -6,6 +6,10 @@ body {
   gap: 6px;
 }
 
+html, body {
+  height: fit-content;
+}
+
 .small-icon {
   max-width: 20px;
   max-height: 20px;
