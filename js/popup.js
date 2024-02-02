@@ -43,8 +43,14 @@ function getButtonNode() {
 }
 
 async function adjustOptions(manager) {
-  getSwitchNode().checked = await manager.isEnabled();
+  const isEnabled = await manager.isEnabled();
+  getSwitchNode().checked = isEnabled;
   getLoopNode().checked = await manager.isLoop();
+  enableOptions(isEnabled);
+}
+
+function enableOptions(isEnabled) {
+  getLoopNode().disabled = !isEnabled;
 }
 
 function addEventListeners(manager) {
@@ -56,6 +62,7 @@ function addEventListeners(manager) {
 function handleSwitch(manager) {
   return (e) => {
     manager.saveIsEnabled(e.target.checked);
+    enableOptions(e.target.checked);
   }
 }
 
