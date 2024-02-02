@@ -1,6 +1,11 @@
 (async () => {
   const [tab] = await getActiveTab();
-  const searchParams = new URL(tab.url).searchParams;
+  const tabUrl = new URL(tab.url);
+  if (!isYoutubeOpen(tabUrl)) {
+    hideOptions();
+    return;
+  }
+  const searchParams = tabUrl.searchParams;
   const manager = getManager(searchParams);
   if (!manager) {
     hideOptions();
@@ -15,6 +20,10 @@ function getActiveTab() {
     active: true,
     currentWindow: true,
   });
+}
+
+function isYoutubeOpen(url) {
+  return url.hostname.includes('youtube.com');
 }
 
 function getManager(searchParams) {
