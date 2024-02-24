@@ -65,6 +65,8 @@ function main(lastManager) {
       childList: true,
       subtree: true,
     });
+  } else {
+    manager.simulateShuffle();
   }
 
   let videoNode;
@@ -82,6 +84,9 @@ function main(lastManager) {
       return;
     }
     videoNode = getVideoNode(containerNode);
+    if (!videoNode) {
+      return;
+    }
     videoController = getVideoListener(manager, videoNode);
     videoNode.addEventListener('timeupdate', videoController);
   };

@@ -101,6 +101,7 @@ class Manager {
 
   async shuffle(numOfItems) {
     const items = this.getShuffledList(numOfItems);
+    this.isShuffleCalled = true;
     const info = await this.loadInfo();
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
@@ -120,13 +121,16 @@ class Manager {
       shuffle: items,
       pointer: 0,
     });
-    this.isShuffleCalled = true;
     this.storage.setItem(info);
     return info
   }
 
   hasShuffled() {
     return this.isShuffleCalled;
+  }
+
+  simulateShuffle() {
+    this.isShuffleCalled = true;
   }
 
   getShuffledList(numOfItems) {
