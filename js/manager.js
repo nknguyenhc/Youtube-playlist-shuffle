@@ -19,16 +19,7 @@ class Manager {
   }
 
   async loadInfo() {
-    const infoString = await this.storage.getItem();
-    try {
-      return this.loadInfoFromString(infoString);
-    } catch (e) {
-      return [];
-    }
-  }
-
-  loadInfoFromString(infoString) {
-    const infoObject = JSON.parse(infoString);
+    const infoObject = await this.storage.getItem();
     if (Array.isArray(infoObject)) {
       return infoObject;
     } else {
@@ -71,7 +62,7 @@ class Manager {
       if (info[i].listId === this.listId) {
         info[i].isEnabled = isEnabled;
         info[i].shuffle = undefined;
-        this.storage.setItem(JSON.stringify(info));
+        this.storage.setItem(info);
         return info;
       }
     }
@@ -79,7 +70,7 @@ class Manager {
       listId: this.listId,
       isEnabled: isEnabled,
     });
-    this.storage.setItem(JSON.stringify(info));
+    this.storage.setItem(info);
     return info;
   }
 
@@ -88,7 +79,7 @@ class Manager {
     for (let i = 0; i < info.length; i++) {
       if (info[i].listId === this.listId) {
         info[i].isLoop = isLoop;
-        this.storage.setItem(JSON.stringify(info));
+        this.storage.setItem(info);
         return info;
       }
     }
@@ -96,16 +87,16 @@ class Manager {
       listId: this.listId,
       isLoop: isLoop,
     });
-    this.storage.setItem(JSON.stringify(info));
+    this.storage.setItem(info);
     return info;
   }
 
   clear() {
-    this.storage.setItem(JSON.stringify([
+    this.storage.setItem([
       {
         listId: this.listId,
       }
-    ]));
+    ]);
   }
 
   async shuffle(numOfItems) {
@@ -118,7 +109,7 @@ class Manager {
         }
         info[i].shuffle = items;
         info[i].pointer = 0;
-        this.storage.setItem(JSON.stringify(info));
+        this.storage.setItem(info);
         return info;
       }
     }
@@ -130,7 +121,7 @@ class Manager {
       pointer: 0,
     });
     this.isShuffleCalled = true;
-    this.storage.setItem(JSON.stringify(info));
+    this.storage.setItem(info);
     return info
   }
 
@@ -178,7 +169,7 @@ class Manager {
           return info[i].shuffle[info[i].pointer];
         }
         info[i].pointer = info[i].isLoop ? (info[i].pointer + 1) % info[i].shuffle.length : info[i].pointer + 1;
-        this.storage.setItem(JSON.stringify(info));
+        this.storage.setItem(info);
         return result;
       }
     }
