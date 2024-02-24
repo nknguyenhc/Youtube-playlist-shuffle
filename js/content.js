@@ -58,14 +58,14 @@ function main(lastManager) {
       return;
     }
     elements = newElements;
-    if (!manager.equal(lastManager)) {
-      manager.shuffle(elements.length);
-    }
+    manager.shuffle(elements.length);
   });
-  playlistObserver.observe(document, {
-    childList: true,
-    subtree: true,
-  });
+  if (!manager.equal(lastManager) || !lastManager.hasShuffled()) {
+    playlistObserver.observe(document, {
+      childList: true,
+      subtree: true,
+    });
+  }
 
   let videoNode;
   let videoController;
@@ -107,6 +107,7 @@ function execute() {
   let currLocation = location.href;
   const urlObserver = new MutationObserver(() => {
     if (location.href !== currLocation) {
+      console.log(`Location changed from ${currLocation} to ${location.href}`);
       currLocation = location.href;
       if (execution) {
         execution();

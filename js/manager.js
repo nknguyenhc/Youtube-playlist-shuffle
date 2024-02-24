@@ -1,6 +1,7 @@
 class Manager {
   listId;
   storage;
+  isShuffleCalled = false;
 
   static infoKey = 'playlistShuffles';
 
@@ -128,8 +129,13 @@ class Manager {
       shuffle: items,
       pointer: 0,
     });
+    this.isShuffleCalled = true;
     this.storage.setItem(JSON.stringify(info));
     return info
+  }
+
+  hasShuffled() {
+    return this.isShuffleCalled;
   }
 
   getShuffledList(numOfItems) {
