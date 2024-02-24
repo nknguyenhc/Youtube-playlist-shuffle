@@ -21,7 +21,7 @@ function getVideoNode(containerNode) {
 }
 
 function isAdVideo(containerNode) {
-  return containerNode.querySelector('.ytp-heat-map') === null;
+  return containerNode.querySelector('.ad-showing') !== null;
 }
 
 function getVideoListener(manager, videoNode) {
