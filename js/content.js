@@ -27,6 +27,10 @@ function isAdVideo(containerNode) {
 function getVideoListener(manager, videoNode) {
   return async () => {
     if (videoNode.currentTime > videoNode.duration - 2) {
+      const containerNode = getContainerNode();
+      if (containerNode && isAdVideo(containerNode)) {
+        return;
+      }
       const nodes = getPlaylistItemNodes();
       const nextIndex = await manager.getNextIndex(nodes.length);
       if (nextIndex === undefined) {
