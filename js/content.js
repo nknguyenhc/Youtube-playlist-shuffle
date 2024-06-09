@@ -48,6 +48,21 @@ function pressPlaylistItem(playlistItem) {
   playlistItem.querySelector('a').click();
 }
 
+// a.ytp-next-button.ytp-button
+function hideNextTooltip() {
+  if (document.getElementById('yps-hide-tooltip') !== null) {
+    return;
+  }
+  const stylesheet = document.createElement('style');
+  stylesheet.innerText = `
+    .ytp-tooltip.ytp-preview {
+      display: none;
+    };
+  `;
+  stylesheet.id = "yps-hide-tooltip"
+  document.head.appendChild(stylesheet);
+}
+
 function main(lastManager) {
   const manager = getManager();
   if (!manager) {
@@ -61,6 +76,7 @@ function main(lastManager) {
     if (elements.length === newElements.length || newElements.length === 0) {
       return;
     }
+    console.log(`Reshuffling because element list length changed from ${elements.length} to ${newElements.length}`);
     elements = newElements;
     manager.shuffle(elements.length);
   });
@@ -101,6 +117,8 @@ function main(lastManager) {
     childList: true,
     subtree: true,
   });
+  
+  hideNextTooltip();
 
   return [manager, () => {
     playlistObserver.disconnect();
