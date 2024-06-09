@@ -44,11 +44,14 @@ function getVideoListener(manager, videoNode) {
   }
 }
 
+function getNextButton() {
+  return document.querySelector('a.ytp-next-button.ytp-button');
+}
+
 function pressPlaylistItem(playlistItem) {
   playlistItem.querySelector('a').click();
 }
 
-// a.ytp-next-button.ytp-button
 function hideNextTooltip() {
   if (document.getElementById('yps-hide-tooltip') !== null) {
     return;
@@ -61,6 +64,28 @@ function hideNextTooltip() {
   `;
   stylesheet.id = "yps-hide-tooltip"
   document.head.appendChild(stylesheet);
+}
+
+function disableDefaultNext() {
+  const nextButton = getNextButton();
+  const nextButtonClone = nextButton.cloneNode(true);
+  nextButton.parentElement.replaceChild(nextButtonClone, nextButton);
+}
+
+function addNextListener(manager) {
+  const nextButton = getNextButton();
+  nextButton.addEventListener('click', async () => {
+    const nodes = getPlaylistItemNodes();
+    const nextIndex = await manager.getNextIndex(nodes.length);
+    if (nextIndex) {
+      pressPlaylistItem(nodes[nextIndex]);
+    }
+  });
+}
+
+function controlNextVideo(manager) {
+  disableDefaultNext();
+  addNextListener(manager);
 }
 
 function main(lastManager) {
@@ -119,6 +144,7 @@ function main(lastManager) {
   });
   
   hideNextTooltip();
+  controlNextVideo(manager);
 
   return [manager, () => {
     playlistObserver.disconnect();
