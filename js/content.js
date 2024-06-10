@@ -52,6 +52,14 @@ function pressPlaylistItem(playlistItem) {
   playlistItem.querySelector('a').click();
 }
 
+function pressNextItem(playlistItems) {
+  const nextIndex = playlistItems.map(elem => elem.hasAttribute('selected')).indexOf(true) + 1;
+  const nextItem = playlistItems[nextIndex];
+  if (nextItem) {
+    pressPlaylistItem(nextItem);
+  }
+}
+
 function hideNextTooltip() {
   if (document.getElementById('yps-hide-tooltip') !== null) {
     return;
@@ -79,6 +87,8 @@ function addNextListener(manager) {
     const nextIndex = await manager.getNextIndex(nodes.length);
     if (nextIndex) {
       pressPlaylistItem(nodes[nextIndex]);
+    } else {
+      pressNextItem(nodes);
     }
   });
 }
