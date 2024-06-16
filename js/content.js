@@ -74,10 +74,10 @@ function hideNextTooltip() {
   document.head.appendChild(stylesheet);
 }
 
-function disableDefaultNext() {
-  const nextButton = getNextButton();
+function disableDefaultNext(nextButton, manager) {
   const nextButtonClone = nextButton.cloneNode(true);
   nextButton.parentElement.replaceChild(nextButtonClone, nextButton);
+  addNextListener(manager);
 }
 
 function addNextListener(manager) {
@@ -94,8 +94,23 @@ function addNextListener(manager) {
 }
 
 function controlNextVideo(manager) {
-  disableDefaultNext();
-  addNextListener(manager);
+  let nextButton;
+  const attachNextListener = () => {
+    if (nextButton) {
+      return;
+    }
+    nextButton = getNextButton();
+    if (!nextButton) {
+      return;
+    }
+    disableDefaultNext(nextButton, manager);
+  }
+  attachNextListener();
+  const nextObserver = new MutationObserver(attachNextListener);
+  nextObserver.observe(document, {
+    childList: true,
+    subtree: true,
+  })
 }
 
 function main(lastManager) {
