@@ -60,20 +60,6 @@ function pressNextItem(playlistItems) {
   }
 }
 
-function hideNextTooltip() {
-  if (document.getElementById('yps-hide-tooltip') !== null) {
-    return;
-  }
-  const stylesheet = document.createElement('style');
-  stylesheet.innerText = `
-    .ytp-tooltip.ytp-preview {
-      display: none;
-    };
-  `;
-  stylesheet.id = "yps-hide-tooltip"
-  document.head.appendChild(stylesheet);
-}
-
 function disableDefaultNext(nextButton, manager) {
   const nextButtonClone = nextButton.cloneNode(true);
   nextButton.parentElement.replaceChild(nextButtonClone, nextButton);
@@ -168,7 +154,6 @@ function main(lastManager) {
     subtree: true,
   });
   
-  hideNextTooltip();
   controlNextVideo(manager);
 
   return [manager, () => {
