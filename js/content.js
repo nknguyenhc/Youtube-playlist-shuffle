@@ -96,7 +96,8 @@ function controlNextVideo(manager) {
   nextObserver.observe(document, {
     childList: true,
     subtree: true,
-  })
+  });
+  return nextObserver;
 }
 
 function main(lastManager) {
@@ -154,7 +155,7 @@ function main(lastManager) {
     subtree: true,
   });
   
-  controlNextVideo(manager);
+  const nextObserver = controlNextVideo(manager);
 
   return [manager, () => {
     playlistObserver.disconnect();
@@ -162,6 +163,7 @@ function main(lastManager) {
     if (videoNode) {
       videoNode.removeEventListener('timeupdate', videoController);
     }
+    nextObserver.disconnect();
   }];
 }
 
