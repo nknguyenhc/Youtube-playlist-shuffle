@@ -14,6 +14,7 @@ Add this extension to your browser! We will automatically shuffle playlists.
 
 * Generate a fixed order for one full cycle, ensuring that all songs are played within one cycle.
 * Allow disabling shuffling or stop at the last song for playlists you indicate.
+* Press next to go to the next random song.
 
 ## Usage
 
@@ -50,8 +51,7 @@ We do not collect any data from users.
 
 Our extension are still in early development stage, and hence is not yet able to fully control Youtube playlists. We hope that in a future version, we can:
 
-* Control the next video of Youtube, allowing users to pull video time indicator to the very end or press next to move onto the next video in the shuffle.
-* Better handling of adding or removing items from a playlist.
+* Control the next video of Youtube, allowing users to pull video time indicator to the very end to move onto the next video in the shuffle.
 
 ## Development
 
