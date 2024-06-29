@@ -71,7 +71,7 @@ function addNextListener(manager) {
   nextButton.addEventListener('click', async () => {
     const nodes = getPlaylistItemNodes();
     const nextIndex = await manager.getNextIndex(nodes.length);
-    if (nextIndex) {
+    if (nextIndex !== null && nextIndex !== undefined) {
       pressPlaylistItem(nodes[nextIndex]);
     } else {
       pressNextItem(nodes);
